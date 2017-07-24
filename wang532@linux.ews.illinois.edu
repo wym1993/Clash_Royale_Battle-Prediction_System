@@ -1,0 +1,107 @@
+import numpy as np
+import pandas as pd
+import csv
+
+def fillMiss(df):
+	for name in list(df):
+		if not sum(pd.isnull(df[name])):
+			continue;
+		df[name] = df[name].fillna(df[name].mode()[0]);
+	
+	return df;
+
+
+userDF = pd.read_csv('user.txt', sep = ',', names=['Id','Gender','Age','Occupation'], skiprows=1);
+movieDF = pd.read_csv('movie.txt', sep = ',', names=['Id','Year','Genre'], skiprows=1);
+trainDF = pd.read_csv('train.txt', sep = ',', names=['Id','user-Id','movie-Id','rating'], skiprows=1);
+print trainDF.shape
+
+# Deal with missing value
+userDF = fillMiss(userDF);
+movieDF = fillMiss(movieDF);
+
+# Set category for data
+# Delete Occupation
+userDF = userDF.drop('Occupation', axis=1);
+
+# Set Age
+ageNum = int((max(userDF['Age'])-min(userDF['Age']))/10);
+userDF['Age'] = pd.cut(userDF['Age'], ageNum, labels = range(ageNum));
+
+# Set year
+yearNum = int((max(movieDF['Year']-min(movieDF['Year'])))/10);
+movieDF['Year'] = pd.cut(movieDF['Year'], yearNum, labels=range(yearNum));
+
+featureMatrix = [];
+for idx in range(len(trainDF.index)):
+	print idx
+	lineDF = trainDF[idx:(idx+1)].reset_index(drop=True);
+	userId = int(lineDF['user-Id'][0]);
+	movieId = int(lineDF['movie-Id'][0]);
+	userLine = userDF[userDF['Id']==userId].reset_index(drop=True);
+	movieLine = movieDF[movieDF['Id']==movieId].reset_index(drop=True);
+	genreLine = str(movieLine['Genre'][0]).split('|');
+	for genre in genreLine:
+		oneFeaLine = [userLine['Gender'][0], int(userLine['Age']), int(movieLine['Year']), genre, int(lineDF['rating'])];
+		featureMatrix.append(oneFeaLine);
+
+featureDF = pd.DataFrame(data = featureMatrix, columns=['Gender', 'Age', 'Year', 'Genre', 'rating'])
+DTreeDict = {}
+
+GenderList = list(set(np.array(featureDF['Gender'])));
+print 'Gender',len(GenderList)
+AgeList = list(set(np.array(featureDF['Age'])));
+print 'age', len(AgeList)
+YearList = list(set(np.array(featureDF['Year'])));
+print 'Year', len(YearList);
+GenreList = list(set(np.array(featureDF['Genre'])));
+print 'Genre', len(GenreList);
+ratingList = list(set(np.array(featureDF['rating'])));
+print 'rating', len(ratingList)
+
+for gender in GenderList:
+	for age in AgeList:
+		for year in YearList:
+			for genre in GenreList:
+				line = str(gender)+' ' + str(age) + ' ' + str(year) + ' ' + str(genre);
+				subset = featureDF[(featureDF['Gender']==gender) & (featureDF['Age']==age) & (featureDF['Year']==year) & (featureDF['Genre']==genre)]
+				tmpList = [];
+
+				for i in range(len(ratingList)):
+					rating = ratingList[i];
+					tmpList.append(len(subset[subset['rating']==rating].index)*1.0/len(subset.index));
+
+				bestRate = ratingList[tmpList.index(max(tmpList))];
+				print bestRate, bestRate
+				DTreeDict[line] = bestRate;
+
+
+testDF = pd.read_csv('test.txt', sep = ',', names=['Id','user-Id','movie-Id'], skiprows=1);
+testMatrix = []
+
+for idx in range(len(testDF.index)):
+	lineDF = testDF[idx:(idx+1)].reset_index(drop=True);
+	userId = int(lineDF['user-Id'][0]);
+	movieId = int(lineDF['movie-Id'][0]);
+	userLine = userDF[userDF['Id']==userId].reset_index(drop=True);
+	movieLine = movieDF[movieDF['Id']==movieId].reset_index(drop=True);
+	genreLine = str(movieLine['Genre'][0]).split('|');
+	tmpList = []
+	for genre in genreLine:
+		line = str(userLine['Gender'][0])+' '+ str(userLine['Age'])+' '+str(movieLine['Year'])+' '+str(genre);
+		tmpList.append(DTreeDict[line]);
+
+	testMatrix.append([int(lineDF['Id'][0]), int(np.mean(tmpList))]);
+
+file = open('test_0501_BF.csv', 'w');
+wr = csv.writer(file, dialect='excel');
+wr.writerow(['Id', 'rating']);
+for line in testMatrix:
+	print line
+	wr.writerow(line);
+
+print 'finished';
+
+
+
+
