@@ -1,6 +1,6 @@
 import numpy as np 
 import csv
-import readCardInfo 
+import readCardInfo
 import pandas as pd
 
 # Read file into matrix
