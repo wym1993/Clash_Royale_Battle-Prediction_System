@@ -1,16 +1,20 @@
 import csv
 import numpy as np
 
-# Read data into matrix
 def loadData(filename):
+	'''
+	Read data into matrix
+	'''
 	with open(filename,'rU') as csvfile:
 		reader=csv.reader(csvfile)
 		S = [[str(i) for i in r] for r in reader]
 	return S
 
-# Compare and merge new battle record and exclude
-# those same battle records
 def compare(S1, S2):
+	'''
+	Compare and merge new battle record and exclude
+	those same battle records
+	'''
 	newS = [];
 
 	for line in S2:

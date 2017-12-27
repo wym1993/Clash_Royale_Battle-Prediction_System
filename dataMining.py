@@ -9,6 +9,9 @@ def readS(filename):
 	return S
 
 def genDistinctComb(DataM, cardInfo):
+	'''
+	This function find the distinct card combination from data file
+	'''
 	disCardComb = [];
 	for line in DataM:
 		comb1 = line[0:7];
@@ -20,8 +23,10 @@ def genDistinctComb(DataM, cardInfo):
 
 	return disCardComb;
 
-# This is to find the initial count from input
 def countInit(transac):
+	'''
+	This is to find the initial count from input
+	'''
 	initCount = {};
 	for line in transac:
 		for item in line:
@@ -32,13 +37,17 @@ def countInit(transac):
 
 	return initCount;
 
-# This is to check if comb is the sublist of line
 def checkSubList(line, comb):
+	'''
+	This is to check if comb is the sublist of line
+	'''
 	ls1 = [element for element in line if element in comb]
 	return sorted(ls1)==sorted(comb)
 
-# This is to compute the support of comb in transac
 def getSup(transac, comb):
+	'''
+	This is to compute the support of comb in transac
+	'''
 	sup = 0;
 	for line in transac:
 		if checkSubList(line, comb):
@@ -46,8 +55,10 @@ def getSup(transac, comb):
 
 	return sup;
 
-# This is to find frequent pattern given current candidate set
 def findFreq(currIt, min_sup, transac):
+	'''
+	This is to find frequent pattern given current candidate set
+	'''
 	freq = {};
 	consi = []
 	for key1 in currIt:
@@ -67,8 +78,10 @@ def findFreq(currIt, min_sup, transac):
 
 	return freq;
 
-# This is the process for finding frequent pattern
 def findFreqPattern(initCount, min_sup, transac):
+	'''
+	This is the process for finding frequent pattern
+	'''
 	currCount = {}
 	freqPattern = {};
 	
@@ -97,14 +110,15 @@ def findFreqPattern(initCount, min_sup, transac):
 	return freqPattern;
 
 def writeFeatureMatrix(featureMatrix, filename):
+	'''
+	Write the feature matrix to file
+	'''
 	file = open(filename, 'w');
 	wr = csv.writer(file, dialect='excel');
 	for i in range(len(featureMatrix)):
 		print i
 		wr.writerow(featureMatrix[i])
 
-def readFeatureMatrix(filename):
-	file = open
 
 def main():
 	xlsxName = 'cards.xlsx'

@@ -4,8 +4,10 @@ import re
 import csv
 import sys
 
-# Get top players list
 def getPlayers(url):
+	'''
+	Get top players list
+	'''
 	source_code = requests.get(url);
 	plain_text = source_code.text;
 	soup = BeautifulSoup(plain_text, 'html.parser');
@@ -21,8 +23,10 @@ def getPlayers(url):
 
 	return PlayerSet
 
-# Collect battle record for each player
 def getMatch(url, player):
+	'''
+	Collect battle record for each player
+	'''
 	newURL = url+str(player);
 	source_code = requests.get(newURL);
 	plain_text = source_code.text;
@@ -53,8 +57,10 @@ def getMatch(url, player):
 	print player, len(cardSet)
 	return scoreSet, cardSet;
 
-# Save player list to the file
 def readPlayers(filename):
+	'''
+	Save player list to the file
+	'''
 	file = open(filename, 'r');
 	nameList = []
 	for line in file.readlines():

@@ -7,6 +7,9 @@
 from xlrd import open_workbook
 import xlrd
 class cardObj(object):
+    '''
+    class for card
+    '''
     def __init__(self, ID, NAME, TYPE, RARITY, COST):
         self.ID = ID
         self.NAME = NAME
@@ -25,6 +28,9 @@ class cardObj(object):
                         self.RARITY, int(float(self.COST))))
 
 def readCARD(filename):
+  '''
+  Read card info from file
+  '''
   wb = open_workbook(filename)
   items = {}
   for sheet in wb.sheets():

@@ -24,8 +24,10 @@ from sklearn.naive_bayes import MultinomialNB
 import random
 import NN
 
-# Read feature from file into a matrix
 def readFeature(filename):
+	'''
+	Read feature from file into a matrix
+	'''
 	with open(filename,'rU') as csvfile:
 		reader=csv.reader(csvfile)
 		S = [[str(i) for i in r] for r in reader]
@@ -35,6 +37,9 @@ def readFeature(filename):
 	return featureMatrix, labMatrix;
 
 def feaImpPlot(featureMatrix, labMatrix):
+	'''
+	Plot the feature matrix
+	'''
 	model = XGBClassifier()
 	model.fit(featureMatrix, labMatrix)
 	# feature importance
@@ -43,6 +48,9 @@ def feaImpPlot(featureMatrix, labMatrix):
 	pyplot.show()
 
 def xgboostEva(featureMatrix, labMatrix, feaLen):
+	'''
+	Use XGBoost to evalute the feature matrix
+	'''
 	model = XGBClassifier()
 	model.fit(featureMatrix, labMatrix)
 	importance = np.array(model.feature_importances_)
@@ -63,6 +71,9 @@ def univarEva(featureMatrix, labMatrix, feaLen):
 	return featuresIdx;
 
 def algoImp(newFeatureMatrix, labMatrix, algorList):
+	'''
+	Main program for multiple algorithms
+	'''
 	(row, col) = newFeatureMatrix.shape
 	split = int(row*0.8);
 	for algor in algorList:

@@ -3,38 +3,44 @@ import csv
 import readCardInfo
 import pandas as pd
 
-# Read file into matrix
 def readS(filename):
+	'''
+	Read file into matrix
+	'''
 	with open(filename,'rU') as csvfile:
 		reader=csv.reader(csvfile)
 		S = [[str(i) for i in r] for r in reader]
 		S = np.matrix(S)
 	return S
 
-# Read card info
 def readCARD(filename):
-  wb = open_workbook(filename)
-  items = {}
-  for sheet in wb.sheets():
-      number_of_rows = sheet.nrows
-      number_of_columns = sheet.ncols
-      rows = []
-      for row in range(1, number_of_rows):
-          values = []
-          for col in range(number_of_columns):
-              value  = str(sheet.cell(row,col).value)
-              try:
-                  value = str(xlrd.xldate_as_tuple(value, 0))
-              except ValueError:
-                  pass
-              finally:
-                  values.append(value)
-          item = cardObj(*values)
-          items[item.NAME] = item
-  return items
+	'''
+	Read card info
+	'''
+	wb = open_workbook(filename)
+	items = {}
+	for sheet in wb.sheets():
+		number_of_rows = sheet.nrows
+		number_of_columns = sheet.ncols
+		rows = []
+		for row in range(1, number_of_rows):
+			values = []
+			for col in range(number_of_columns):
+				value  = str(sheet.cell(row,col).value)
+				try:
+					value = str(xlrd.xldate_as_tuple(value, 0))
+				except ValueError:
+					pass
+				finally:
+					values.append(value)
+			item = cardObj(*values)
+			items[item.NAME] = item
+	return items
 
-# Generate card composition and label matrix
 def genCardMatrix(DataM, cardInfo):
+	'''
+	Generate card composition and label matrix
+	'''
 	cardNum = len(cardInfo);
 	row, col = DataM.shape;
 	cardMatrix = []
@@ -61,8 +67,10 @@ def genCardMatrix(DataM, cardInfo):
 
 	return np.matrix(cardMatrix), np.matrix(matchResult).T;
 
-# Generate cost matrix
 def genCostMatrix(DataM, cardInfo):
+	'''
+	Generate cost matrix
+	'''
 	row, col = DataM.shape;
 	level = 6
 	costMatrix = []
@@ -81,8 +89,10 @@ def genCostMatrix(DataM, cardInfo):
 
 	return np.matrix(costMatrix);
 
-# Calculate average cost for two decks
 def getAveCost(line, cardInfo):
+	'''
+	Calculate average cost for two decks
+	'''
 	ave1 = 0
 	ave2 = 0
 	for i in range(8):
@@ -91,8 +101,10 @@ def getAveCost(line, cardInfo):
 
 	return ave1/8.0, ave2/8.0;
 
-# Generate card type matrix
 def genTypeMatrix(DataM, cardInfo):
+	'''
+	Generate card type matrix
+	'''
 	row, col = DataM.shape;
 	typeMatrix = [];
 	typeList = ['Troops', 'Spells', 'Buildings'];
@@ -314,7 +326,8 @@ def main():
 	print 'finished';
 
 if __name__ == "__main__":
-    main();
+    #main();
+    pass
 
 
 """
